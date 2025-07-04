@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin - Orders</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <div id="header"></div>
+    <div class="container my-5">
+        <h2>All Orders</h2>
+        <table class="table table-striped" id="ordersTable">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Nama Penerima</th>
+                    <th>Nomor HP</th>
+                    <th>Alamat</th>
+                    <th>Menu</th>
+                    <th>Metode Bayar</th>
+                    <th>Status</th>
+                    <th>Total Price</th>
+                    <th>Order Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Orders will be populated here -->
+            </tbody>
+        </table>
+    </div>
+    <div id="footer"></div>
+
+    <script src="/js/jquery-3.7.1.min.js"></script>
+    <script>
+        $(function () {
+            $("#header").load("header.html");
+            $("#footer").load("footer.html");
+
+            function formatMenu(menu) {
+                return menu.map(item => {
+                    return `${item.namaMenu} (Qty: ${item.quantity})`;
+                }).join(", ");
+            }
+
+            function loadOrders() {
+fetch('/api/orders')
+                    .then(res => res.json())
+                    .then(data => {
+                        const tbody = $('#ordersTable tbody');
+                        tbody.empty();
+                        data.forEach(order => {
+                            const orderDate = new Date(order.createdAt).toLocaleString();
+                            const menuStr = formatMenu(order.menu);
+                            const row = `
+                                <tr>
+                                    <td>${order._id}</td>
+                                    <td>${order.namaPenerima}</td>
+                                    <td>${order.nomorHP}</td>
+                                    <td>${order.alamat}</td>
+                                    <td>${menuStr}</td>
+                                    <td>${order.metodeBayar}</td>
+                                    <td>
+                                        <span class="badge ${order.status === 'Done' ? 'bg-success' : 'bg-danger'}">
+                                            ${order.status}
+                                        </span>
+                                    </td>
+                                    <td>${order.totalPrice ? 'Rp ' + order.totalPrice.toLocaleString('id-ID') : '-'}</td>
+                                    <td>${orderDate}</td>
+                                    <td>
+                                        ${order.status === 'Not Done' ? `<button class="btn btn-success btn-sm mark-done" data-id="${order._id}">Mark as Done</button>` : ''}
+                                    </td>
+                                </tr>
+                            `;
+                            tbody.append(row);
+                        });
+                    })
+                    .catch(err => {
+                        alert('Failed to load orders: ' + err.message);
+                    });
+            }
+
+            loadOrders();
+
+            // Event delegation for mark as done buttons
+            $('#ordersTable').on('click', '.mark-done', function() {
+                const orderId = $(this).data('id');
+fetch(`/api/orders/${orderId}/done`, {
+                    method: 'PATCH'
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('Failed to update order status');
+                    }
+                    return res.json();
+                })
+                .then(() => {
+                    loadOrders();
+                })
+                .catch(err => {
+                    alert('Error updating order status: ' + err.message);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

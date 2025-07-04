@@ -38,12 +38,12 @@
                         </label>
                         <select id="metodeBayar" name="metodeBayar" class="form-select" required>
                             <option value="" disabled selected>Pilih Metode Bayar</option>
-                            <option value="gopay">Gopay</option>
-                            <option value="dana">Dana</option>
-                            <option value="bank_bri">Bank BRI</option>
-                            <option value="bank_mandiri">Bank Mandiri</option>
-                            <option value="bank_bca">Bank BCA</option>
-                            <option value="bank_bni">Bank BNI</option>
+                            <option value="Gopay">Gopay</option>
+                            <option value="Dana">Dana</option>
+                            <option value="BRI">Bank BRI</option>
+                            <option value="Mandiri">Bank Mandiri</option>
+                            <option value="BCA">Bank BCA</option>
+                            <option value="BNI">Bank BNI</option>
                         </select>
                     </div>
                 </div>
@@ -63,6 +63,15 @@
                 $("#header").load("header.html");
                 $("#footer").load("footer.html");
 
+                // Update total price display on page load
+                function updateTotalPrice() {
+                    const cart = getCart();
+                    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+                    $('#totalPrice').text('Rp ' + total.toLocaleString('id-ID'));
+                }
+
+                updateTotalPrice();
+
                 $('#checkoutForm').on('submit', function(e) {
                     e.preventDefault();
 
@@ -78,44 +87,46 @@
                         return;
                     }
 
-                    let output = `Order Summary\n\n`;
-                    output += `Nama Penerima: ${fullname}\n`;
-                    output += `Nomor HP: ${nohp}\n`;
-                    output += `Alamat Lengkap: ${address}\n`;
-                    output += `Metode Bayar: ${metodeBayar}\n\n`;
-                    output += `Items:\n`;
+                    // Transform cart items to match backend schema
+                    const transformedMenu = cart.map(item => ({
+                        productId: item.id,
+                        namaMenu: item.name,
+                        harga: item.price,
+                        quantity: item.quantity
+                    }));
 
-                    cart.forEach(item => {
-                        output += `- ${item.name} x${item.quantity} @ Rp ${item.price.toLocaleString('id-ID')}\n`;
+                    const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+fetch('/api/orders', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            namaPenerima: fullname,
+                            nomorHP: nohp,
+                            alamat: address,
+                            menu: transformedMenu,
+                            metodeBayar: metodeBayar,
+                            totalPrice: totalPrice
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to submit order');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert('Order submitted successfully!');
+                        localStorage.removeItem('shoppingCart');
+                        // Save order data to sessionStorage for receipt page
+                        sessionStorage.setItem('orderReceipt', JSON.stringify(data));
+                        window.location.href = 'receipt.html';
+                    })
+                    .catch(error => {
+                        alert('Error submitting order: ' + error.message);
                     });
-
-                    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-                    output += `\nTotal: Rp ${total.toLocaleString('id-ID')}\n`;
-
-                    $('#textOutput').text(output).show();
-
-                    // Get last customer number from localStorage or start at 0
-                    let lastCustomerNumber = localStorage.getItem('lastCustomerNumber');
-                    lastCustomerNumber = lastCustomerNumber ? parseInt(lastCustomerNumber) : 0;
-                    const newCustomerNumber = lastCustomerNumber + 1;
-                    localStorage.setItem('lastCustomerNumber', newCustomerNumber);
-
-                    // Create a blob with the output text
-                    const blob = new Blob([output], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-
-                    // Create a temporary link to trigger download
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `costumer${newCustomerNumber}.txt`;
-                    document.body.appendChild(a);
-                    a.click();
-
-                    // Cleanup
-                    setTimeout(() => {
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    }, 0);
                 });
             });
         </script>

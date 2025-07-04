@@ -55,17 +55,34 @@
                 }
 
                 const productId = getQueryParam('productId');
-                const product = products.find(p => p.id === productId);
 
-                if (product) {
-                    $('#productImage').attr('src', product.image).attr('alt', product.name);
-                    $('#productName').text(product.name);
-                    $('#productPrice').text('Rp ' + product.price.toLocaleString('id-ID'));
-                    $('#productDescription').text(product.description);
-                } else {
-                    // If product not found, show a message or redirect
-                    $('.container').html('<p>Product not found.</p>');
+                async function fetchProductById(id) {
+                    try {
+const response = await fetch(`/api/products/${id}`);
+                        if (!response.ok) {
+                            throw new Error('Product not found');
+                        }
+                        const product = await response.json();
+                        return product;
+                    } catch (error) {
+                        console.error('Error fetching product:', error);
+                        return null;
+                    }
                 }
+
+                let product = null;
+
+                fetchProductById(productId).then(fetchedProduct => {
+                    product = fetchedProduct;
+                    if (product) {
+                        $('#productImage').attr('src', product.picture).attr('alt', product.namaMenu);
+                        $('#productName').text(product.namaMenu);
+                        $('#productPrice').text('Rp ' + product.harga.toLocaleString('id-ID'));
+                        $('#productDescription').text(product.deskripsi);
+                    } else {
+                        $('.container').html('<p>Product not found.</p>');
+                    }
+                });
 
                 $('#addToCartForm').on('submit', function(e) {
                     e.preventDefault();
@@ -79,10 +96,10 @@
                         return;
                     }
                     const productToAdd = {
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        image: product.image,
+                        id: product._id,
+                        name: product.namaMenu,
+                        price: product.harga,
+                        image: product.picture,
                         quantity: quantity
                     };
                     addItem(productToAdd);
