@@ -1,6 +1,5 @@
 const Order = require('../models/Order');
 
-// Create new order
 exports.createOrder = async (req, res) => {
   try {
     const { namaPenerima, nomorHP, alamat, menu, metodeBayar, totalPrice } = req.body;
@@ -31,7 +30,6 @@ exports.createOrder = async (req, res) => {
 };
 
 
-// Get all orders
 exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });

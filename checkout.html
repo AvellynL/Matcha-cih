@@ -113,7 +113,7 @@
                         return response.json();
                     })
                     .then(data => {
-                        alert('Order submitted successfully!');
+                        alert('Orderan Telah Dibuat!');
                         localStorage.removeItem('shoppingCart');
                         sessionStorage.setItem('orderReceipt', JSON.stringify(data));
                         window.location.href = 'receipt.html';

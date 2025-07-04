@@ -10,11 +10,11 @@
 <body>
     <div id="header"></div>
     <div class="container my-5">
-        <h2>Order Receipt</h2>
+        <h2>Struk Pembayaran</h2>
                 <div id="receiptDetails" class="border p-4 rounded bg-light">
                     
                 </div>
-                <button id="backToHome" class="btn btn-primary mt-3">Back to Home</button>
+                <button id="backToHome" class="btn btn-primary mt-3">Kembali</button>
             </div>
             <div id="footer"></div>
 
@@ -32,7 +32,7 @@
 
             function formatMenu(menu) {
                 return menu.map(item => {
-                    return `<li>${item.namaMenu} - Qty: ${item.quantity} - Price: Rp${item.harga.toLocaleString()}</li>`;
+                    return `<li>${item.namaMenu} - Jumlah : ${item.quantity} - Harga: Rp${item.harga.toLocaleString()}</li>`;
                 }).join('');
             }
 
@@ -43,10 +43,10 @@
                 <p><strong>Nomor HP:</strong> ${receiptData.nomorHP}</p>
                 <p><strong>Alamat:</strong> ${receiptData.alamat}</p>
                 <p><strong>Metode Bayar:</strong> ${receiptData.metodeBayar}</p>
-                <p><strong>Order Date:</strong> ${orderDate}</p>
+                <p><strong>Tanggal Order:</strong> ${orderDate}</p>
                 <p><strong>Menu:</strong></p>
                 <ul>${formatMenu(receiptData.menu)}</ul>
-                <p><strong>Total Price:</strong> Rp ${receiptData.totalPrice ? receiptData.totalPrice.toLocaleString('id-ID') : '0'}</p>
+                <p><strong>Total Harga:</strong> Rp ${receiptData.totalPrice ? receiptData.totalPrice.toLocaleString('id-ID') : '0'}</p>
             `;
 
             $('#receiptDetails').html(receiptHtml);

@@ -22,10 +22,10 @@
                     <th>Alamat</th>
                     <th>Menu</th>
                     <th>Metode Bayar</th>
-                    <th>Status</th>
-                    <th>Total Price</th>
-                    <th>Order Date</th>
-                    <th>Action</th>
+                    <th>Status Pembayaran</th>
+                    <th>Total Harga</th>
+                    <th>Tanggal Order</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -86,7 +86,6 @@
 
             loadOrders();
 
-            // Event delegation for mark as done buttons
             $('#ordersTable').on('click', '.mark-done', function () {
                 const orderId = $(this).data('id');
                 fetch(`http://localhost:5000/api/orders/${orderId}/done`, {
