@@ -92,7 +92,7 @@
 
                 const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-                fetch('/api/orders', {
+                fetch('http://localhost:5000/api/orders', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

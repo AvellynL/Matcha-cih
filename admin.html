@@ -48,7 +48,7 @@
             }
 
             function loadOrders() {
-                fetch('/api/orders')
+                fetch('http://localhost:5000/api/orders')
                     .then(res => res.json())
                     .then(data => {
                         const tbody = $('#ordersTable tbody');
@@ -89,7 +89,7 @@
             // Event delegation for mark as done buttons
             $('#ordersTable').on('click', '.mark-done', function () {
                 const orderId = $(this).data('id');
-                fetch(`/api/orders/${orderId}/done`, {
+                fetch(`http://localhost:5000/api/orders/${orderId}/done`, {
                     method: 'PATCH'
                 })
                     .then(res => {
