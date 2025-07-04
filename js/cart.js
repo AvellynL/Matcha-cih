@@ -57,7 +57,6 @@ function renderCart(tableBodySelector, totalSelector) {
     cart.forEach(item => {
         const tr = document.createElement('tr');
 
-        // Product info cell
         const tdName = document.createElement('td');
         const divFlex = document.createElement('div');
         divFlex.className = 'd-flex align-items-center';
@@ -74,12 +73,10 @@ function renderCart(tableBodySelector, totalSelector) {
         tdName.appendChild(divFlex);
         tr.appendChild(tdName);
 
-        // Price cell
         const tdPrice = document.createElement('td');
         tdPrice.textContent = formatCurrency(item.price);
         tr.appendChild(tdPrice);
 
-        // Quantity cell
         const tdQuantity = document.createElement('td');
         const inputQuantity = document.createElement('input');
         inputQuantity.type = 'number';
@@ -99,12 +96,10 @@ function renderCart(tableBodySelector, totalSelector) {
         tdQuantity.appendChild(inputQuantity);
         tr.appendChild(tdQuantity);
 
-        // Total price cell
         const tdTotalPrice = document.createElement('td');
         tdTotalPrice.textContent = formatCurrency(item.price * item.quantity);
         tr.appendChild(tdTotalPrice);
 
-        // Remove button cell
         const tdRemove = document.createElement('td');
         const btnRemove = document.createElement('button');
         btnRemove.className = 'btn btn-outline-danger btn-sm';

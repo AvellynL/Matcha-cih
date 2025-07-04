@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Admin - Orders</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
     <div id="header"></div>
     <div class="container my-5">
@@ -28,7 +29,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Orders will be populated here -->
+                
             </tbody>
         </table>
     </div>
@@ -47,7 +48,7 @@
             }
 
             function loadOrders() {
-fetch('/api/orders')
+                fetch('/api/orders')
                     .then(res => res.json())
                     .then(data => {
                         const tbody = $('#ordersTable tbody');
@@ -86,25 +87,26 @@ fetch('/api/orders')
             loadOrders();
 
             // Event delegation for mark as done buttons
-            $('#ordersTable').on('click', '.mark-done', function() {
+            $('#ordersTable').on('click', '.mark-done', function () {
                 const orderId = $(this).data('id');
-fetch(`/api/orders/${orderId}/done`, {
+                fetch(`/api/orders/${orderId}/done`, {
                     method: 'PATCH'
                 })
-                .then(res => {
-                    if (!res.ok) {
-                        throw new Error('Failed to update order status');
-                    }
-                    return res.json();
-                })
-                .then(() => {
-                    loadOrders();
-                })
-                .catch(err => {
-                    alert('Error updating order status: ' + err.message);
-                });
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error('Failed to update order status');
+                        }
+                        return res.json();
+                    })
+                    .then(() => {
+                        loadOrders();
+                    })
+                    .catch(err => {
+                        alert('Error updating order status: ' + err.message);
+                    });
             });
         });
     </script>
 </body>
+
 </html>

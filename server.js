@@ -8,21 +8,16 @@ const path = require('path');
 
 const app = express();
 
-// Connect to MongoDB
 connectDB();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Serve static files (frontend)
 app.use(express.static(path.join(__dirname, '')));
 
-// Routes
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 
-// Fallback route for SPA or root
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
