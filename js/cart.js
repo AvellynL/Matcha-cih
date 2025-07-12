@@ -1,5 +1,9 @@
 const CART_KEY = 'shoppingCart';
 
+function reloadHeader() {
+    $('#header').load('header.html');
+}
+
 function getCart() {
     const token = localStorage.getItem('token');
     if (!token) {
