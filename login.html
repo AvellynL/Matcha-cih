@@ -54,9 +54,8 @@
                     localStorage.setItem('username', data.username || data.name);
                     alert('Login successful');
                     // Reload header after login
-                    $('#header').load('header.html', function() {
-                        window.location.href = 'index.html';
-                    });
+                    reloadHeader();
+                    window.location.href = 'index.html';
                 } catch (error) {
                     alert('Error: ' + error.message);
                 }

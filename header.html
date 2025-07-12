@@ -31,7 +31,11 @@
     </div>
 </nav>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    $(function () {
+        function reloadHeader() {
+            $('#header').load('header.html?t=' + new Date().getTime());
+        }
+
         const token = localStorage.getItem('token');
         const profileDropdown = document.getElementById('profileDropdown');
         const loginNavItem = document.getElementById('loginNavItem');
@@ -67,9 +71,9 @@
             profileDropdown.style.display = 'none';
             loginNavItem.style.display = 'block';
             // Reload header after logout
-            $('#header').load('header.html', function() {
-                window.location.href = 'index.html';
-            });
+            reloadHeader();
+            window.location.href = 'index.html';
         });
     });
 </script>
+</create_file>

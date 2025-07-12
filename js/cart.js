@@ -1,7 +1,8 @@
 const CART_KEY = 'shoppingCart';
 
 function reloadHeader() {
-    $('#header').load('header.html');
+    const timestamp = new Date().getTime();
+    $('#header').load('header.html?t=' + timestamp);
 }
 
 function getCart() {
