@@ -1,6 +1,5 @@
 const Order = require('../models/Order');
 
-// Create new order
 exports.createOrder = async (req, res) => {
   try {
     const { namaPenerima, nomorHP, alamat, menu, metodeBayar, totalPrice } = req.body;
