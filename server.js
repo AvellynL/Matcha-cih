@@ -4,6 +4,7 @@ const connectDB = require('./config/db');
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const userRoutes = require('./routes/userRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 const cors = require('cors');
 const path = require('path');
 
@@ -19,7 +20,6 @@ app.use(express.static(path.join(__dirname, '')));
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
-const cartRoutes = require('./routes/cartRoutes');
 app.use('/api/cart', cartRoutes);
 
 app.get('/', (req, res) => {
