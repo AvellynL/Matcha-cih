@@ -54,21 +54,38 @@
     <div id="footer"></div>
 
     <script src="/js/jquery-3.7.1.min.js"></script>
-    <script src="/js/cart.js"></script>
+    <script src="/js/cart-api.js"></script>
     <script>
-        $(function () {
+        $(async function () {
             $("#header").load("header.html");
             $("#footer").load("footer.html");
 
-            function updateTotalPrice() {
-                const cart = getCart();
-                const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-                $('#totalPrice').text('Rp ' + total.toLocaleString('id-ID'));
+            async function autofillUserInfo() {
+                try {
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    const res = await fetch('/api/users/profile', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    if (!res.ok) throw new Error('Failed to fetch user profile');
+                    const user = await res.json();
+
+                    $('#fullname').val(user.name);
+                    $('#nohp').val(''); // No phone in user model, keep empty or add if needed
+                    $('#address').val(user.address);
+                    $('#email').val(user.email);
+                } catch (error) {
+                    console.error('Error autofilling user info:', error);
+                }
             }
 
-            updateTotalPrice();
+            await autofillUserInfo();
 
-            $('#checkoutForm').on('submit', function (e) {
+            $('#checkoutForm').on('submit', async function (e) {
                 e.preventDefault();
 
                 const fullname = $('#fullname').val();
@@ -76,51 +93,55 @@
                 const address = $('#address').val();
                 const metodeBayar = $('#metodeBayar').val();
 
-                const cart = getCart();
+                try {
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
 
-                if (cart.length === 0) {
-                    alert('Cart is empty. Please add items to cart before checkout.');
-                    return;
-                }
+                    const cart = await getCart();
 
-                const transformedMenu = cart.map(item => ({
-                    productId: item.id,
-                    namaMenu: item.name,
-                    harga: item.price,
-                    quantity: item.quantity
-                }));
+                    if (cart.length === 0) {
+                        alert('Cart is empty. Please add items to cart before checkout.');
+                        return;
+                    }
 
-                const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+                    const transformedMenu = cart.map(item => ({
+                        productId: item.productId,
+                        namaMenu: item.name,
+                        harga: item.price,
+                        quantity: item.quantity
+                    }));
 
-                fetch('/api/orders', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        namaPenerima: fullname,
-                        nomorHP: nohp,
-                        alamat: address,
-                        menu: transformedMenu,
-                        metodeBayar: metodeBayar,
-                        totalPrice: totalPrice
-                    })
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to submit order');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert('Order submitted successfully!');
-                        localStorage.removeItem('shoppingCart');
-                        sessionStorage.setItem('orderReceipt', JSON.stringify(data));
-                        window.location.href = 'receipt.html';
-                    })
-                    .catch(error => {
-                        alert('Error submitting order: ' + error.message);
+                    const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+                    const response = await fetch('/api/orders', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            namaPenerima: fullname,
+                            nomorHP: nohp,
+                            alamat: address,
+                            menu: transformedMenu,
+                            metodeBayar: metodeBayar,
+                            totalPrice: totalPrice
+                        })
                     });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to submit order');
+                    }
+
+                    const data = await response.json();
+                    alert('Order submitted successfully!');
+                    window.location.href = `receipt.html?orderId=${data._id}`;
+                } catch (error) {
+                    alert('Error submitting order: ' + error.message);
+                }
             });
         });
     </script>

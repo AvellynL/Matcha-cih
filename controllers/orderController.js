@@ -13,6 +13,7 @@ exports.createOrder = async (req, res) => {
     }
 
     const newOrder = new Order({
+      user: req.user._id,
       namaPenerima,
       nomorHP,
       alamat,
@@ -30,30 +31,55 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-
-// Get all orders
-exports.getAllOrders = async (req, res) => {
+// Get orders by user
+exports.getOrdersByUser = async (req, res) => {
   try {
-    const orders = await Order.find().sort({ createdAt: -1 });
+    const userId = req.user._id;
+    const orders = await Order.find({ user: userId }).sort({ createdAt: -1 });
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Update order status to "Done"
+
+// Get all orders
+exports.getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find().populate('user', 'username').sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Update order status to "Delivered"
 exports.markOrderDone = async (req, res) => {
   try {
     const { id } = req.params;
     const updatedOrder = await Order.findByIdAndUpdate(
       id,
-      { status: 'Done' },
+      { status: 'Delivered' },
       { new: true }
     );
     if (!updatedOrder) {
       return res.status(404).json({ message: 'Order not found' });
     }
     res.json(updatedOrder);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Get order by ID
+exports.getOrderById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    res.json(order);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

@@ -24,10 +24,30 @@
             $("#header").load("header.html");
             $("#footer").load("footer.html");
 
-            const receiptData = JSON.parse(sessionStorage.getItem('orderReceipt'));
-            if (!receiptData) {
-                $('#receiptDetails').html('<p>No receipt data found.</p>');
+            // Get orderId from query parameter
+            function getQueryParam(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param);
+            }
+
+            const orderId = getQueryParam('orderId');
+            if (!orderId) {
+                $('#receiptDetails').html('<p>No order ID provided.</p>');
                 return;
+            }
+
+            async function fetchOrderById(id) {
+                try {
+                    const response = await fetch(`/api/orders/${id}`);
+                    if (!response.ok) {
+                        throw new Error('Order not found');
+                    }
+                    const order = await response.json();
+                    return order;
+                } catch (error) {
+                    console.error('Error fetching order:', error);
+                    return null;
+                }
             }
 
             function formatMenu(menu) {
@@ -36,23 +56,29 @@
                 }).join('');
             }
 
-            const orderDate = new Date(receiptData.createdAt || Date.now()).toLocaleString();
+            fetchOrderById(orderId).then(order => {
+                if (!order) {
+                    $('#receiptDetails').html('<p>No receipt data found.</p>');
+                    return;
+                }
 
-            const receiptHtml = `
-                <p><strong>Nama Penerima:</strong> ${receiptData.namaPenerima}</p>
-                <p><strong>Nomor HP:</strong> ${receiptData.nomorHP}</p>
-                <p><strong>Alamat:</strong> ${receiptData.alamat}</p>
-                <p><strong>Metode Bayar:</strong> ${receiptData.metodeBayar}</p>
-                <p><strong>Order Date:</strong> ${orderDate}</p>
-                <p><strong>Menu:</strong></p>
-                <ul>${formatMenu(receiptData.menu)}</ul>
-                <p><strong>Total Price:</strong> Rp ${receiptData.totalPrice ? receiptData.totalPrice.toLocaleString('id-ID') : '0'}</p>
-            `;
+                const orderDate = new Date(order.createdAt || Date.now()).toLocaleString();
 
-            $('#receiptDetails').html(receiptHtml);
+                const receiptHtml = `
+                    <p><strong>Nama Penerima:</strong> ${order.namaPenerima}</p>
+                    <p><strong>Nomor HP:</strong> ${order.nomorHP}</p>
+                    <p><strong>Alamat:</strong> ${order.alamat}</p>
+                    <p><strong>Metode Bayar:</strong> ${order.metodeBayar}</p>
+                    <p><strong>Order Date:</strong> ${orderDate}</p>
+                    <p><strong>Menu:</strong></p>
+                    <ul>${formatMenu(order.menu)}</ul>
+                    <p><strong>Total Price:</strong> Rp ${order.totalPrice ? order.totalPrice.toLocaleString('id-ID') : '0'}</p>
+                `;
+
+                $('#receiptDetails').html(receiptHtml);
+            });
 
             $('#backToHome').click(() => {
-                sessionStorage.removeItem('orderReceipt');
                 window.location.href = 'index.html';
             });
         });

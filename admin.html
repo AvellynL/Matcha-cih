@@ -17,6 +17,7 @@
             <thead>
                 <tr>
                     <th>Order ID</th>
+                    <th>Username</th>
                     <th>Nama Penerima</th>
                     <th>Nomor HP</th>
                     <th>Alamat</th>
@@ -59,20 +60,21 @@
                             const row = `
                                 <tr>
                                     <td>${order._id}</td>
+                                    <td>${order.user ? order.user.username : 'N/A'}</td>
                                     <td>${order.namaPenerima}</td>
                                     <td>${order.nomorHP}</td>
                                     <td>${order.alamat}</td>
                                     <td>${menuStr}</td>
                                     <td>${order.metodeBayar}</td>
                                     <td>
-                                        <span class="badge ${order.status === 'Done' ? 'bg-success' : 'bg-danger'}">
+                                        <span class="badge ${order.status === 'Delivered' ? 'bg-success' : 'bg-danger'}">
                                             ${order.status}
                                         </span>
                                     </td>
                                     <td>${order.totalPrice ? 'Rp ' + order.totalPrice.toLocaleString('id-ID') : '-'}</td>
                                     <td>${orderDate}</td>
                                     <td>
-                                        ${order.status === 'Not Done' ? `<button class="btn btn-success btn-sm mark-done" data-id="${order._id}">Mark as Done</button>` : ''}
+                                        ${order.status === 'Not Delivered' ? `<button class="btn btn-success btn-sm mark-done" data-id="${order._id}">Mark as Delivered</button>` : ''}
                                     </td>
                                 </tr>
                             `;

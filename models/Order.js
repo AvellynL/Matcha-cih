@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   namaPenerima: { type: String, required: true },
   nomorHP: { type: String, required: true },
   alamat: { type: String, required: true },
@@ -17,7 +18,7 @@ const orderSchema = new mongoose.Schema({
     enum: ['Gopay', 'Dana', 'BRI', 'BCA', 'Mandiri', 'BNI'], 
     required: true 
   },
-  status: { type: String, default: 'Not Done' },
+  status: { type: String, default: 'Not Delivered' },
   totalPrice: { type: Number, required: true }
 }, { timestamps: true });
 

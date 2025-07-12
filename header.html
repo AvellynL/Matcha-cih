@@ -7,13 +7,68 @@
                 name="q" id="searchInput" />
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
-        <ul class="navbar-nav ms-auto d-flex flex-row gap-3 mb-0">
+        <ul class="navbar-nav ms-auto d-flex flex-row gap-3 mb-0 align-items-center">
             <li class="nav-item">
                 <a class="nav-link active" href="index.html">Home</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a>
             </li>
+            <li class="nav-item dropdown" id="profileDropdown" style="display:none;">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-circle fa-lg me-1"></i> <span id="profileName"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+                    <li><a class="dropdown-item" href="cart.html">Cart</a></li>
+                    <li><a class="dropdown-item" href="profile.html#transactionHistory">Past Transactions</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </li>
+            <li class="nav-item" id="loginNavItem">
+                <a class="nav-link" href="login.html">Login</a>
+            </li>
         </ul>
     </div>
 </nav>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('token');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const loginNavItem = document.getElementById('loginNavItem');
+        const profileName = document.getElementById('profileName');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        if (token) {
+            fetch('/api/users/profile', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch profile');
+                return res.json();
+            })
+            .then(user => {
+                profileName.textContent = user.name || user.username;
+                profileDropdown.style.display = 'block';
+                loginNavItem.style.display = 'none';
+            })
+            .catch(() => {
+                profileDropdown.style.display = 'none';
+                loginNavItem.style.display = 'block';
+            });
+        } else {
+            profileDropdown.style.display = 'none';
+            loginNavItem.style.display = 'block';
+        }
+
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            profileDropdown.style.display = 'none';
+            loginNavItem.style.display = 'block';
+            window.location.href = 'index.html';
+        });
+    });
+</script>

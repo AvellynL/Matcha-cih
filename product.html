@@ -26,7 +26,7 @@
                             <label for="jumlah" class="form-label">Jumlah</label>
                             <input type="number" id="jumlah" name="jumlah" value="1" min="1" class="form-control" />
                         </div>
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-cart-plus"></i> Tambah ke Kerajang</button>
+                        <button type="submit" id="addToCartBtn" class="btn btn-primary"><i class="fas fa-cart-plus"></i> Tambah ke Kerajang</button>
                     </form>
                 </div>
             </div>
@@ -37,69 +37,100 @@
 
         <script src="/js/jquery-3.7.1.min.js"></script>
         <script src="js/products.js"></script>
-        <script src="js/cart.js"></script>
-        <script>
-            $(function() {
-                $("#header").load("header.html");
-                $("#footer").load("footer.html");
+        <!-- Removed js/cart.js to avoid conflicts -->
+        <script src="js/cart-api.js"></script>
+                <script>
+                    $(function() {
+                        $("#header").load("header.html");
+                        $("#footer").load("footer.html");
 
-                function getQueryParam(param) {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    return urlParams.get(param);
-                }
-
-                const productId = getQueryParam('productId');
-
-                async function fetchProductById(id) {
-                    try {
-                        const response = await fetch(`/api/products/${id}`);
-                        if (!response.ok) {
-                            throw new Error('Product not found');
+                        // Check if user is logged in and update add to cart button behavior
+                        const token = localStorage.getItem('token');
+                        if (!token) {
+                            $('#addToCartBtn').off('click').on('click', function(e) {
+                                e.preventDefault();
+                                window.location.href = 'login.html';
+                            });
                         }
-                        const product = await response.json();
-                        return product;
-                    } catch (error) {
-                        console.error('Error fetching product:', error);
-                        return null;
+                    });
+
+                // Wait for cart-api.js to load and addItem to be available
+                function waitForAddItem(callback) {
+                    if (typeof addItem !== 'undefined') {
+                        callback();
+                    } else {
+                        setTimeout(() => waitForAddItem(callback), 50);
                     }
                 }
 
-                let product = null;
+                waitForAddItem(() => {
+                    function getQueryParam(param) {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        return urlParams.get(param);
+                    }
 
-                fetchProductById(productId).then(fetchedProduct => {
-                    product = fetchedProduct;
-                    if (product) {
-                        $('#productImage').attr('src', product.picture).attr('alt', product.namaMenu);
-                        $('#productName').text(product.namaMenu);
-                        $('#productPrice').text('Rp ' + product.harga.toLocaleString('id-ID'));
-                        $('#productDescription').text(product.deskripsi);
-                    } else {
-                        $('.container').html('<p>Product not found.</p>');
-                    }
-                });
+                    const productId = getQueryParam('productId');
+                    console.log('Extracted productId:', productId);
 
-                $('#addToCartForm').on('submit', function(e) {
-                    e.preventDefault();
-                    const quantity = parseInt($('#jumlah').val());
-                    if (isNaN(quantity) || quantity < 1) {
-                        alert('Jumlah harus minimal 1');
-                        return;
+                    async function fetchProductById(id) {
+                        try {
+                            const response = await fetch(`/api/products/${id}`);
+                            if (!response.ok) {
+                                throw new Error('Product not found');
+                            }
+                            const product = await response.json();
+                            return product;
+                        } catch (error) {
+                            console.error('Error fetching product:', error);
+                            return null;
+                        }
                     }
-                    if (!product) {
-                        alert('Produk tidak ditemukan');
-                        return;
-                    }
-                    const productToAdd = {
-                        id: product._id,
-                        name: product.namaMenu,
-                        price: product.harga,
-                        image: product.picture,
-                        quantity: quantity
-                    };
-                    addItem(productToAdd);
-                    window.location.href = 'cart.html';
+
+                    let product = null;
+
+                    fetchProductById(productId).then(fetchedProduct => {
+                        product = fetchedProduct;
+                        console.log('Fetched product:', product);
+                        if (product) {
+                            $('#productImage').attr('src', product.picture).attr('alt', product.namaMenu);
+                            $('#productName').text(product.namaMenu);
+                            $('#productPrice').text('Rp ' + product.harga.toLocaleString('id-ID'));
+                            $('#productDescription').text(product.deskripsi);
+                        } else {
+                            $('.container').html('<p>Product not found.</p>');
+                        }
+                    });
+
+                    $('#addToCartForm').on('submit', function(e) {
+                        e.preventDefault();
+                        const quantity = parseInt($('#jumlah').val());
+                        if (isNaN(quantity) || quantity < 1) {
+                            alert('Jumlah harus minimal 1');
+                            return;
+                        }
+                        if (!product) {
+                            alert('Produk tidak ditemukan');
+                            return;
+                        }
+                        const productToAdd = {
+                            productId: product._id,
+                            name: product.namaMenu,
+                            price: product.harga,
+                            image: product.picture,
+                            quantity: quantity
+                        };
+                        addItem(productToAdd).then(() => {
+                            // Only redirect to cart.html if not redirected to login.html by addItem
+                            if (!window.location.href.includes('login.html')) {
+                                window.location.href = 'cart.html';
+                            }
+                        }).catch(err => {
+                            alert('Failed to add item to cart');
+                            console.error(err);
+                        });
+                    });
                 });
-            });
+            ;
         </script>
     </body>
 </html>

@@ -1,6 +1,11 @@
 const CART_KEY = 'shoppingCart';
 
 function getCart() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = 'login.html';
+        return [];
+    }
     const cart = localStorage.getItem(CART_KEY);
     return cart ? JSON.parse(cart) : [];
 }
