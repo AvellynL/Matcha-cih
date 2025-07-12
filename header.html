@@ -68,7 +68,10 @@
             localStorage.removeItem('username');
             profileDropdown.style.display = 'none';
             loginNavItem.style.display = 'block';
-            window.location.href = 'index.html';
+            // Reload header after logout
+            $('#header').load('header.html', function() {
+                window.location.href = 'index.html';
+            });
         });
     });
 </script>

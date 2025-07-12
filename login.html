@@ -53,7 +53,10 @@
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('username', data.username || data.name);
                     alert('Login successful');
-                    window.location.href = 'index.html';
+                    // Reload header after login
+                    $('#header').load('header.html', function() {
+                        window.location.href = 'index.html';
+                    });
                 } catch (error) {
                     alert('Error: ' + error.message);
                 }
