@@ -28,4 +28,44 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+app.get('/header.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'header.html'));
+});
+
+app.get('/footer.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'footer.html'));
+});
+
+app.get('/login.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/register.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'register.html'));
+});
+
+app.get('/product.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'product.html'));
+});
+
+app.get('/cart.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'cart.html'));
+});
+
+app.get('/receipt.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'receipt.html'));
+});
+
+app.get('/checkout.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'checkout.html'));
+});
+
+app.get('/profile.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'profile.html'));
+});
+
+app.get('/admin.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
 module.exports = app;
