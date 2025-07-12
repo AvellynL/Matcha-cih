@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
+app.use('/css', express.static(path.join(__dirname, 'css')));
 
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
