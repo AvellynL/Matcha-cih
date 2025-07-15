@@ -34,4 +34,4 @@ Daffa Hafizh Fadhlulloh (24SA31A022)
 - Mencari refenrensi foto produk
 - Pencetus ide tema website
 
-
+Video Demonstrasi : https://drive.google.com/file/d/19CnRRFw1FmX5IHNS0jXCJPNGCFmTv9gv/view?usp=sharing
