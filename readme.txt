@@ -1,18 +1,37 @@
-Kesulitan saat membuat project
+Tentang Project :
 
-saat mencoba mengaitkan dengan database, login dan register berhasil, tetapi saat akan mencoba mengaitkan dengan keranjang, mengalami Kesulitan
+Matcha-cih adalah sebuah Website E-commerce yang menjual berbagai product yang bertema matcha mulai dari makanan hingga minuman.
+Fitur yang ada didalam website ini : 
+- Fitur Memesan makanan.
+- Fitur Login dan Register Akun, memakai module JWT dan bcrypt.
+- Dapat melihat teransaksi yang telah dilakukan oleh pengguna akun tersebut didalam profile akun mereka. 
+- Menyimpan Keranjang berdasarkan Akun yang Login.
+- Menyimpan semua transaksi yang terjadi oleh akun tersebut.
+- Page Khusus untuk admin ( https://matcha-cih.vercel.app/admin.html ).
 
-checkout untuk saat ini mengeluarkan output ke .txt
 
 
-web butuh local server buat berjalan, buka run.bat(butuh python3)
-Cara manual untuk membuka local server memakai python
-buka cmd di folder website, ketik python3 -m http.server 8000 -d .\ (8000 adalah angka port, bisa diganti)
-lalu buka localhost:8000 (sesuai angka port yang diketik pada cmd)
 
-beberapa resource diambil lewat online, so butuh internet
+Peran Masing-masing anggota kelompok : 
 
-Kelompok
-Zidan Dwi
-Ilham julian
-Daffa kuadrat (ada dua)
+Muhammad Zidan Dwi Pambudi (24SA31A018)
+- Membuat Database
+- Mencari referensi foto produk
+- Membuat laporan project
+
+Ilham Juliandi (24SA31A024)
+- Membuat desain grafis foto produk dan banner
+- Mencari refenrensi foto produk
+
+Daffa Maulana Akhmad Muzakki (24SA31A019)
+- FullStack
+- Hosting Frontend dan Backend
+- Mencari referensi code dari internet
+- Membuat desain grafis foto produk
+
+Daffa Hafizh Fadhlulloh (24SA31A022)
+- Membuat desain grafis foto produk dan banner
+- Mencari refenrensi foto produk
+- Pencetus ide tema website
+
+
